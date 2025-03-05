@@ -1,3 +1,9 @@
+# Usar una imagen de Maven para compilar el proyecto
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
+
 # Usar una imagen de Java
 FROM openjdk:21-slim
 
@@ -5,7 +11,7 @@ FROM openjdk:21-slim
 WORKDIR /app
 
 # Copiar el archivo JAR generado por Maven
-COPY target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # Exponer el puerto de la aplicación
 EXPOSE 8080
